@@ -66,8 +66,13 @@ class MoviesController < ApplicationController
 
   def similar
     @movie=Movie.find(params[:id])
-    @movies=Movie.where(:director => @movie.director).where(['id != ?',@movie.id]).all
-    render :action => :similar
+    if @movie.director.empty?
+      flash[:notice] = "'#{@movie.title}' has no director info"
+      redirect_to movies_path
+    else
+      @movies=Movie.where(:director => @movie.director).where(['id != ?',@movie.id]).all
+      render :action => :similar
+    end
   end
 
 end

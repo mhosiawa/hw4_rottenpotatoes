@@ -13,19 +13,33 @@ describe MoviesController do
     		get :similar, :id =>1
     	end
 		it 'should select a template for rendering' do
-			Movie.stub(:find).and_return(mock('movie').as_null_object)
+			Movie.stub(:find).and_return(mock('movie', :director => 'George Lukas').as_null_object)
 			Movie.stub_chain(:where, :where, :all)
 			get :similar, :id =>1
 			response.should render_template('similar')
 		end
 
 		it 'should make the search results available to rendered template' do
-			Movie.stub(:find).and_return(mock('movie').as_null_object)
+			Movie.stub(:find).and_return(mock('movie', :director => "George Lukas").as_null_object)
 			similar=[mock('movie1'), mock('movie2')]
 			Movie.stub_chain(:where, :where, :all).and_return(similar)
 			get :similar, :id =>1
 			assigns(:movies).should==similar
 		end
-			
+
+		it 'should redirect to index page if director is empty' do
+			m=mock('movie', :director => '', :title => "Mac")
+			Movie.stub(:find).and_return(m)
+			get :similar, :id=>1
+			response.should redirect_to(movies_path)
+		end
+
+		it 'should flash a message that the movie has no director' do
+			m=mock('movie', :director => '', :title =>"Mac")
+			Movie.stub(:find).and_return(m)
+			get :similar, :id=>1
+			flash[:notice].should=='Mac has no director info'
+		end
+
 	end
 end
