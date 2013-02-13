@@ -64,4 +64,10 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
 
+  def similar
+    @movie=Movie.find(params[:id])
+    @movies=Movie.where(:director => @movie.director).where(['id != ?',@movie.id]).all
+    render :action => :similar
+  end
+
 end
