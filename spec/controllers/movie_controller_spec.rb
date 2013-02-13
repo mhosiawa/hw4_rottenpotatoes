@@ -38,7 +38,7 @@ describe MoviesController do
 			m=mock('movie', :director => '', :title =>"Mac")
 			Movie.stub(:find).and_return(m)
 			get :similar, :id=>1
-			flash[:notice].should=='Mac has no director info'
+			flash[:notice].should=="'Mac' has no director info"
 		end
 
 	end
